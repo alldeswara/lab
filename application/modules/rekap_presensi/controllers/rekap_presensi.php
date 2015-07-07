@@ -16,10 +16,52 @@ class Rekap_presensi extends CI_Controller {
 	}
 	function rekap($id_jadwal)
 	{
+		$data['id_jadwal']=$id_jadwal;
 		$data['list']=$this->getData($id_jadwal);
 		$data['absen']=$this->rekap->getAbsen($id_jadwal);
 		$data['siswa']=$this->rekap->jadwal($id_jadwal);
-		$this->load->view('page_rekap', $data);
+		$this->load->view('page_rekap2', $data);
+	}
+	function toPdf($id_jadwal){
+		$list=$this->getData($id_jadwal);
+		$absen=$this->rekap->getAbsen($id_jadwal);
+		$siswa=$this->rekap->jadwal($id_jadwal);
+		define('FPDF_FONTPATH',APPPATH .'plugins/fpdf/font/');
+	      require(APPPATH .'plugins/fpdf/fpdf.php');
+	     
+	      $pdf = new FPDF('l','mm','A4');
+	      $pdf -> AddPage();
+	     
+	      $pdf -> setDisplayMode ('fullpage');
+	     
+	      $pdf -> setFont ('times','B',20);
+	      $pdf -> cell(200,5,"Rekap Presensi",0,1);
+	      $pdf->line(10,17,200,17);
+	    $pdf->ln();	$pdf->ln();	
+	      $pdf->Cell(35,10,"NIS",'TB',0,'L');
+	      $pdf->Cell(80,10,"Nama Siswa",'TB',0,'L');	
+	      $col=0;foreach($absen as $a){
+	      	$pdf->Cell(10,10,++$col,'TB',0,'R');
+	      }$pdf->ln();
+	      $pdf -> setFont ('times','',16);
+	      foreach($siswa as $siswa){
+	      		$pdf->Cell(35,10,$siswa->nis,'TB',0,'L');
+	      		$pdf->Cell(80,10,$siswa->nama_siswa,'TB',0,'L');
+	      		foreach($absen as $z){
+	      			$pdf->Cell(10,10,$list[$siswa->nis."-".$z->id_absensi],'TB',0,'R');
+	      		}
+	      		$pdf->ln();
+	      }
+	      $pdf -> setFont ('times','B','20');
+	      $pdf -> cell(115,10,"Jumlah kehadiran (Siswa)",'TB',0,'L');
+	      foreach($absen as $a){
+	      		$this->rekap->getJmlMasuk($a->id_absensi);
+	      		$pdf->Cell(10,10,$this->rekap->getJmlMasuk($a->id_absensi),'TB',0,'R');
+	      }
+	      //$pdf->Cell(10,10,$list[$siswa->nis."-".$z->id_absensi],'TB',0,'R');
+	      //$pdf -> write (10,"Description");
+	     
+	      $pdf -> output ('your_file_pdf.pdf','D'); 
 	}
 	function detail($id_jadwal_dtl,$id_absensi)
 	{
@@ -44,22 +86,28 @@ class Rekap_presensi extends CI_Controller {
 				$kehadiran=$this->rekap->getStatus($siswa->nis,$data->id_absensi);
 				if($kehadiran){	
 					if($kehadiran->absensi==1){
-						$str="<i class='glyphicon glyphicon-ok'></i>";
+						//$str="<i class='glyphicon glyphicon-ok'></i>";
+						$str="v";
 					}else if($kehadiran->absensi==2){
-						$str="<i class='glyphicon glyphicon-italic'></i>";
+						//$str="<i class='glyphicon glyphicon-italic'></i>";
+						$str="i";
 					}else if($kehadiran->absensi==3){
 						$str="<i class='glyphicon glyphicon-remove'></i>";
+						$str="x";
 					}else{
-						$str="<i class='glyphicon glyphicon-remove'></i>";
+						$str="x";
+						//$str="<i class='glyphicon glyphicon-remove'></i>";
 					}
 				}else{
-					$str="<i class='glyphicon glyphicon-remove'></i>";
+					//$str="<i class='glyphicon glyphicon-remove'></i>";
+					$str="-";
 				}
 				$dt[$siswa->nis."-".$data->id_absensi]=$str;
 			}
 		}
 		return $dt;	
 	}
+	
 	function getSiswaByKelas($jadwal_dtl,$id_absensi)
 	{
 		$jadwal=$this->m_absensi->getJadwal($jadwal_dtl);
@@ -104,15 +152,24 @@ class Rekap_presensi extends CI_Controller {
 			$absen=$this->input->post('id_'.$siswa->id_absensi_dtl);
 			$up=array('absensi'=>$absen);
 			$this->m_absensi->updateDtl($up,$siswa->id_absensi_dtl);
-			
+			$nmSiswa=explode(' ', $siswa->nama_siswa);
+			$nama_siswa='';
+			for($abc=0;$abc<=count($nmSiswa);$abc++){
+				if($abc==0){
+					$nama_siswa.=$nmSiswa[$abc];
+				}else{
+					$nama_siswa.=substr($nmSiswa[$abc], 1);
+				}
+				$nama_siswa.=" ";
+			}
 			if($absen==3){
-					$str="Pemberitahuan ! kepada orangtua dari ".$siswa->nama_siswa." pada hari ".$jadwal->hari_indonesia." Mata pelajaran ".$jadwal->nama_pelajaran." pada jam ".$jadwal->jam_awal." - ".$jadwal->jam_akhir." anak anda tidak masuk kelas dikarenakan Alpha (tanpa keterangan)";
+					$str="Pemberitahuan ! kepada orangtua dari ".$nama_siswa." pada hari ".$jadwal->hari_indonesia." Mata pelajaran ".$jadwal->nama_pelajaran." pada jam ".$jadwal->jam_awal." - ".$jadwal->jam_akhir." anak anda tidak masuk kelas dikarenakan Alpha (tanpa keterangan)";
 					$alpha=1;
 			}else if($absen==2){
-					$str="Pemberitahuan ! kepada orangtua dari ".$siswa->nama_siswa." pada hari ".$jadwal->hari_indonesia." Mata pelajaran ".$jadwal->nama_pelajaran." pada jam ".$jadwal->jam_awal." - ".$jadwal->jam_akhir." anak anda tidak masuk kelas dikarenakan Ijin";
+					$str="Pemberitahuan ! kepada orangtua dari ".$nama_siswa." pada hari ".$jadwal->hari_indonesia." Mata pelajaran ".$jadwal->nama_pelajaran." pada jam ".$jadwal->jam_awal." - ".$jadwal->jam_akhir." anak anda tidak masuk kelas dikarenakan Ijin";
 					$ijin=1;
 			}else{
-					$str="Pemberitahuan ! kepada orangtua dari ".$siswa->nama_siswa." pada hari ".$jadwal->hari_indonesia." Mata pelajaran ".$jadwal->nama_pelajaran." pada jam ".$jadwal->jam_awal." - ".$jadwal->jam_akhir." anak anda hadir pada kelas tersebut";
+					$str="Pemberitahuan ! kepada orangtua dari ".$nama_siswa." pada hari ".$jadwal->hari_indonesia." Mata pelajaran ".$jadwal->nama_pelajaran." pada jam ".$jadwal->jam_awal." - ".$jadwal->jam_akhir." anak anda hadir pada kelas tersebut";
 					$hadir=1;
 			}
 			if($kirim==1){

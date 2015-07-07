@@ -1,6 +1,3 @@
-
-
-
 <?php $this->load->view('top');?>
 			<div class="row" id="frm-list">
               <div class="col-lg-12">
@@ -26,8 +23,6 @@
                         <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Launch demo modal</button>
 						
 						</a> --> 
-                        
-						
 						
                       </nav>
                     </div><!-- /.toolbar -->
@@ -179,7 +174,7 @@
 				
 	  <div class="form-group">              
                   <div class="col-sm-5">
-							<input type="text"  id="d_id_jadwal" name="id_jadwal" value='<?php echo $this->uri->segment(3);?>' >
+							<input type="hidden"  id="d_id_jadwal" name="id_jadwal" value='<?php echo $this->uri->segment(3);?>' >
                         </div>
 				 </div>       
 						 

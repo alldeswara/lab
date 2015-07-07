@@ -1,9 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class M_absensi extends CI_Model {
-	function getList($date)
+	function getList()
 	{
-		$this->db->where('hari_inggris', $date);
+		$d=date('D');
+		$this->db->where('hari.hari_inggris', $d);
 		$this->db->join('hari', 'hari.id_hari=jadwal_dtl.id_hari');
 		$this->db->join('jadwal', 'jadwal.id_jadwal=jadwal_dtl.id_jadwal');
 		$this->db->join('guru', 'guru.nik=jadwal.nik');

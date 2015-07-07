@@ -1,13 +1,15 @@
-<?php $this->load->view('top');?>
-			   <div class="row" id="frm-list">
-         <form role='form' method="POST" action="<?php echo base_url()?>absensi/presensi/<?php echo $this->uri->segment(3);?>">
+ <?php $this->load->view('top');?>
+         <div class="row" id="frm-list">
+         <form role='form' method="POST" action="<?php echo base_url()?>nilai/insert_nilai">
+              <input type="hidden" name="id_kelas" value="<?php echo $id_kelas;?>">
+              <input type="hidden" name="id_mata_pelajaran" value="<?php echo $id_mata_pelajaran;?>">
               <div class="col-lg-8">
                 <div class="box ">
                   <header class="dark">
                     <div class="icons">
                       <i class="fa fa-table"></i>
                     </div>
-                    <h5>Presensi</h5>
+                    <h5>Penilaian Harian</h5>
 
                     <!-- .toolbar -->
                     <div class="toolbar">
@@ -28,6 +30,7 @@
                          <a href="<?php echo base_url()?>jadwal/index/" id="back" class="btn btn-success btn-xs">
                           <i class="glyphicon glyphicon-book"></i> Back
                         </a>
+                        
                       </nav>
                     </div><!-- /.toolbar -->
                   </header>
@@ -35,22 +38,18 @@
                     <table  class="table table-bordered table-condensed table-hover table-striped">
                       <thead>
                         <tr>
-                          <th>No</th>
                           <th>NIS</th>
                           <th>Nama Siswa</th>
-                          <th>Keterangan</th>
+                          <th>Nilai</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <?php $no=0;foreach($list as $list){?>
+                        <?php $no=0;foreach($list as $data){?>
                         <tr>
-                          <td><?php echo ++$no;?></td>
-                          <td><?php echo $list->nis;?></td>
-                          <td><?php echo $list->nama_siswa;?></td>
+                          <td><?php echo $data->nis;?></td>
+                          <td><?php echo $data->nama_siswa;?></td>
                           <td>
-                              <input type="radio" name="id_<?php echo $list->id_absensi_dtl;?>" <?php if($list->absensi==1){?> checked="" <?php }?> value='1'> Hadir
-                              <input type="radio" name="id_<?php echo $list->id_absensi_dtl;?>" <?php if($list->absensi==2){?> checked="" <?php }?> value='2'> Ijin
-                              <input type="radio" name="id_<?php echo $list->id_absensi_dtl;?>" <?php if($list->absensi==3){?> checked="" <?php }?> value='3'> Alpha
+                              <input type="number" class="validate[required] form-control" name="nilai_<?php echo $data->nis;?>">
                           </td>
                         </tr>
                         <?php } ?>
@@ -85,21 +84,14 @@
                       </nav>
                     </div><!-- /.toolbar -->
                   </header>
-                  <div class="body">
-                      <div class="form-group">
+
+                 <div class="form-group">
                         <label for="exampleInputEmail1">Materi Pembelajaran</label>
-                        <textarea name="materi" class="form-control" placeholder="Materi Pembelajaran"><?php if($ket){echo $ket->keterangan;}?></textarea>
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputEmail1">Kirim</label>
-                        <?php 
-                              $k['0']="- Tidak ada pemberitahuan kepada orangtua -";
-                              $k['1']="- Beritahu Orangtua bagi yang <b>Alpha</b> -";
-                              $k['2']="- Beritahu Orangtua bagi yang <b>Ijin</b> -";
-                              $k['3']="- Beritahu Orangtua untuk semua kondisi -";
-                              echo form_dropdown('kirim', $k, '',"class='form-control' id='kirim' ");?>
-                      </div>
-                      <button type="submit" class="btn btn-primary">Simpan</button>
+        <textarea name="materi" class="validate[required] form-control" placeholder="Materi Pembelajaran"><?php //if($ket){echo $ket->keterangan;}?></textarea>
+                 </div>
+
+                  <div class="body">
+                      <button type="submit" class="btn btn-primary">Kirim</button>
                   </div>
                 </div>
               </div>

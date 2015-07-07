@@ -6,7 +6,7 @@
                     <div class="icons">
                       <i class="fa fa-table"></i>
                     </div>
-                    <h5>Guru</h5>
+                    <h5>Jadwal</h5>
 
                     <!-- .toolbar -->
                     <div class="toolbar">
@@ -44,7 +44,7 @@
 			<tbody>
 						<?php foreach($list as $data){?>
                         <tr>						 
-                          <td><?php echo $data->tingkat_kelas;?>-<?php echo $data->jurusan;?> - <?php echo $data->grup_kelas;?></td>
+              <td><?php echo $data->tingkat_kelas;?>-<?php echo $data->jurusan;?> - <?php echo $data->grup_kelas;?></td>
 						  <td><?php echo $this->M_jadwal->getnamaguru($data->nik);?></td>
 						  <td><?php echo $this->M_jadwal->getnamapelajaran($data->id_mata_pelajaran);?></td>
                           
@@ -76,7 +76,7 @@
                     <div class="icons">
                       <i class="fa fa-table"></i>  
                     </div>
-                    <h5 id="judul">Tambah Program</h5>
+                    <h5 id="judul">Tambah Jadwal</h5>
 
                     <!-- .toolbar -->
                     <div class="toolbar">
@@ -100,7 +100,7 @@
                  <div class="form-group">
                         <label class="col-sm-2 control-label">Kelas</label>
                         <div class="col-sm-5">
-                         <?php echo form_dropdown('id_kelas',$dt_nama,'',"class='form-control' id='d_id_kelas'"); ?>
+                     <?php echo form_dropdown('id_kelas',$dt_nama,'',"class='form-control' id='d_id_kelas'"); ?>
                         </div>
 				   </div>                 
 					
@@ -114,7 +114,7 @@
 					<div class="form-group">
                         <label class="col-sm-2 control-label">Pelajaran</label>
                         <div class="col-sm-5">
-							<?php echo form_dropdown('id_mata_pelajaran',$dt_pelajaran,'',"class='form-control' id='d_mata_pelajaran'"); ?>
+						    	<?php echo form_dropdown('id_mata_pelajaran',$dt_pelajaran,'',"class='form-control' id='d_mata_pelajaran'"); ?>
                        </div>
 					   </div>	
 					
